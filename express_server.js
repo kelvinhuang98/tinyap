@@ -6,15 +6,17 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 
 const generateRandomString = () => {
-  random = "";
-  characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  shortURL = "";
+  characters = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789";
   for (let i = 0; i < 6; i++) {
-    random += characters.substr(
-      Math.floor(Math.random() * characters.length + 1),
-      1
-    );
+    if (shortURL.length < 6) {
+      shortURL += characters.substr(
+        Math.floor(Math.random() * characters.length + 1),
+        1
+      );
+    }
   }
-  return random;
+  return shortURL;
 };
 
 const urlDatabase = {
@@ -44,8 +46,10 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.longURL;
+  console.log(urlDatabase);
+  res.redirect(`/urls/${shortURL}`);
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -54,6 +58,11 @@ app.get("/urls/:id", (req, res) => {
     longURL: urlDatabase[req.params.id],
   };
   res.render("urls_show", templateVars);
+});
+
+app.get("/u/:id", (req, res) => {
+  const longURL = urlDatabase[req.params.id];
+  res.redirect(longURL);
 });
 
 app.listen(PORT, () => {
