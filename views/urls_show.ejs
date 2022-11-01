@@ -12,18 +12,26 @@
   </head>
   
   <body>
-    <%- include('partials/_header') %>
-    
+    <header>
+      <%- include('partials/_header') %>
+    </header>
     <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
-        <p class="card-text">
-          Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
+        <p class="card-text">Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
         </p>
         <a href="#"> </a>
       </div>
-      <div class="card-footer text-muted"></div>
+      <div class="card-footer text-muted">
+        <h4>Edit</h4>
+        <form method="POST" action="/urls/<%= longURL %>">
+          <div class="form-group mb-2">
+            <label for="lname">New URL:</label>
+            <input type="text" id="lname" placeholder="http://">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
     </div>
     <!-- Bootstrap JS -->
     <script
