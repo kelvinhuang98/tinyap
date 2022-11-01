@@ -72,7 +72,6 @@ app.post("/urls/:id", (req, res) => {
     urls: urlDatabase,
     username: req.cookies.username,
   };
-  res.render("urls_index", templateVars);
   res.redirect("/urls");
 });
 
@@ -88,7 +87,6 @@ app.post("/urls/:id/delete", (req, res) => {
     urls: urlDatabase,
     username: req.cookies.username,
   };
-  res.render("urls_index", templateVars);
   res.redirect("/urls");
 });
 
@@ -99,7 +97,6 @@ app.post("/login", (req, res) => {
   };
   res.cookie("username", req.body.username);
   res.redirect("/urls");
-  res.render("urls_index", templateVars);
 });
 
 app.post("/logout", (req, res) => {
