@@ -25,11 +25,12 @@
       </div>
       <div class="card-footer text-muted">
         <h4>Edit</h4>
-        <form method="POST" action="/urls/<%= longURL %>">
+        <form method="POST" action="/urls/<%= id %>">
           <div class="form-group mb-2">
-            <label for="lname">New URL:</label>
-            <input type="text" id="lname" placeholder="http://">
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <label for="newURL">New URL:</label>
+              <input type="text" name="newURL" placeholder="http://">
+            </label>
+            <button class="btn btn-primary">Submit</button>
           </div>
         </div>
     </div>
