@@ -1,5 +1,11 @@
 <html lang="en">
   <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -8,32 +14,24 @@
       crossorigin="anonymous"
     />
 
-    <title>URL - TinyApp</title>
+    <title>Registration - TinyApp</title>
   </head>
-  
+
   <body>
     <header>
       <%- include('partials/_header') %>
     </header>
-    <div class="card text-center">
-      <div class="card-header"></div>
-      <div class="card-body">
-        <h5 class="card-title">TinyURL for: <%= longURL %></h5>
-        <p class="card-text">Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
-        </p>
-        <a href="#"> </a>
-      </div>
-      <div class="card-footer text-muted">
-        <h4>Edit</h4>
-        <form method="POST" action="/urls/<%= id %>">
-          <div class="form-group mb-2">
-            <label for="newURL">New URL:</label>
-            <input type="text" name="newURL" placeholder="http://">
-            <button class="btn btn-primary">Submit</button>
-          </div>
-        </div>
-    </div>
-    <!-- Bootstrap JS -->
+    <main style="margin: 1em;">
+        <h3>Register New User</h3>
+        <form method="POST" action="/register">
+          <label for="email">Email</label>
+          <input type="email" name="email">
+          <label for="password">Password</label>
+          <input type="password" name="password">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+    </main>
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
       integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -50,4 +48,3 @@
       crossorigin="anonymous"
     ></script>
   </body>
-</html>
