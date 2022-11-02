@@ -101,7 +101,12 @@ app.post("/urls/:id", (req, res) => {
 
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
-  res.redirect(longURL);
+  if (!longURL) {
+    res.status(400);
+    res.send("Invalid URL");
+  } else {
+    res.redirect(longURL);
+  }
 });
 
 app.post("/urls/:id/delete", (req, res) => {
@@ -116,7 +121,6 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.post("/login", (req, res) => {
   const user = getUserByEmail(req.body.email, users);
-  console.log(user);
   if (user && user.password === req.body.password) {
     res.cookie("user_id", user.id);
     res.redirect("/urls");
@@ -132,6 +136,9 @@ app.post("/logout", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
+  if (req.cookies.user_id) {
+    res.redirect("/urls");
+  }
   const templateVars = {
     user: users[req.cookies.user_id],
   };
@@ -139,17 +146,19 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  if (req.body.email === "" || req.body.password === "") {
+  const newEmail = req.body.email;
+  const newPass = req.body.password;
+  if (newEmail === "" || newPass === "") {
     res.status(400);
     res.send("Please enter a valid email/password");
-  } else if (getUserByEmail(req.body.email, users)) {
+  } else if (getUserByEmail(newEmail, users)) {
     res.status(400);
     res.send("This email address has already been registered");
   } else {
     const user = {
       id: generateRandomString(6),
-      email: req.body.email,
-      password: req.body.password,
+      email: newEmail,
+      password: newPass,
     };
     users[user.id] = user;
     res.cookie("user_id", user.id);
@@ -158,6 +167,9 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
+  if (req.cookies.user_id) {
+    res.redirect("/urls");
+  }
   const templateVars = {
     user: users[req.cookies.user_id],
   };
