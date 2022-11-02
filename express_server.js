@@ -64,12 +64,17 @@ app.get("/urls", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  const templateVars = {
-    user: users[req.cookies.user_id],
-  };
-  const shortURL = generateRandomString(6);
-  urlDatabase[shortURL] = req.body.longURL;
-  res.redirect(`/urls/${shortURL}`);
+  if (!req.cookies.user_id) {
+    res.status(401);
+    res.send("You must be logged in to use TinyApp");
+  } else {
+    const templateVars = {
+      user: users[req.cookies.user_id],
+    };
+    const shortURL = generateRandomString(6);
+    urlDatabase[shortURL] = req.body.longURL;
+    res.redirect(`/urls/${shortURL}`);
+  }
 });
 
 app.get("/urls/new", (req, res) => {
