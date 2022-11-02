@@ -124,7 +124,7 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username", req.body.username);
+  res.clearCookie("user_id", req.cookies.user_id);
   res.redirect("/urls");
 });
 
@@ -152,6 +152,13 @@ app.post("/register", (req, res) => {
     res.cookie("user_id", user.id);
     res.redirect("/urls");
   }
+});
+
+app.get("/login", (req, res) => {
+  const templateVars = {
+    user: users[req.cookies.user_id],
+  };
+  res.render("urls_login", templateVars);
 });
 
 app.listen(PORT, () => {

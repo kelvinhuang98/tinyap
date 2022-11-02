@@ -25,10 +25,10 @@
         </label>
       </form>
     <% } else { %>
-      <form method="POST" action="/login">
-        <input type="text" name="username" placeholder="Email">
-        <button class="btn btn-outline-dark">Login</button>
-      </form>
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" href="/login">Login</a>
+        <a class="nav-item nav-link" href="/register">Sign Up</a>
+      </div>
     <% } %>
   </nav>
 </header>
