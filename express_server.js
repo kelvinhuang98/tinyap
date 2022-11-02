@@ -115,17 +115,20 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  const templateVars = {
-    urls: urlDatabase,
-    user: users[req.cookies.user_id],
-  };
-  res.cookie("username", req.body.username);
-  res.redirect("/urls");
+  const user = getUserByEmail(req.body.email, users);
+  console.log(user);
+  if (user && user.password === req.body.password) {
+    res.cookie("user_id", user.id);
+    res.redirect("/urls");
+  } else {
+    res.status(403);
+    res.send("Inputted invalid credentials");
+  }
 });
 
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id", req.cookies.user_id);
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 app.get("/register", (req, res) => {
