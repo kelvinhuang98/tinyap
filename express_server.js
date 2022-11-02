@@ -19,6 +19,15 @@ const generateRandomString = (number) => {
   return shortURL;
 };
 
+const getUserByEmail = (email, users) => {
+  for (let user in users) {
+    if (users[user].email === email) {
+      return users[user];
+    }
+  }
+  return null;
+};
+
 const users = {
   userRandomID: {
     id: "userRandomID",
@@ -127,14 +136,22 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  const user = {
-    id: generateRandomString(6),
-    email: req.body.email,
-    password: req.body.password,
-  };
-  users[user.id] = user;
-  res.cookie("user_id", user.id);
-  res.redirect("/urls");
+  if (req.body.email === "" || req.body.password === "") {
+    res.status(400);
+    res.send("Please enter a valid email/password");
+  } else if (getUserByEmail(req.body.email, users)) {
+    res.status(400);
+    res.send("This email address has already been registered");
+  } else {
+    const user = {
+      id: generateRandomString(6),
+      email: req.body.email,
+      password: req.body.password,
+    };
+    users[user.id] = user;
+    res.cookie("user_id", user.id);
+    res.redirect("/urls");
+  }
 });
 
 app.listen(PORT, () => {
