@@ -2,7 +2,7 @@ const express = require("express");
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 8080;
 
 const {
   generateRandomString,
@@ -16,6 +16,7 @@ const urlDatabase = {};
 
 const MESSAGE_401 = "You must be logged in to use TinyApp";
 
+// Set EJS Template Engine
 app.set("view engine", "ejs");
 
 // MIDDLEWARE
@@ -32,7 +33,11 @@ app.use(
 
 // ENDPOINTS
 app.get("/", (req, res) => {
-  res.redirect("/login");
+  if (!req.session.user_id) {
+    res.redirect("/login");
+  } else {
+    res.redirect("/urls");
+  }
 });
 
 app.get("/urls", (req, res) => {
@@ -44,23 +49,6 @@ app.get("/urls", (req, res) => {
       user: users[req.session.user_id],
     };
     res.render("urls_index", templateVars);
-  }
-});
-
-app.post("/urls", (req, res) => {
-  if (!req.session.user_id) {
-    res.status(401).send(MESSAGE_401);
-  } else {
-    const templateVars = {
-      urls: urlsForUser(req.session.user_id, urlDatabase),
-      user: users[req.session.user_id],
-    };
-    const shortURL = generateRandomString(6);
-    urlDatabase[shortURL] = {
-      longURL: req.body.longURL,
-      userID: req.session.user_id,
-    };
-    res.redirect(`/urls/${shortURL}`);
   }
 });
 
@@ -90,6 +78,55 @@ app.get("/urls/:id", (req, res) => {
   }
 });
 
+app.get("/u/:id", (req, res) => {
+  const shortURL = req.params.id;
+  const longURL = urlDatabase[shortURL].longURL;
+  if (!longURL) {
+    res.status(400).send("Invalid URL");
+  } else {
+    res.redirect(longURL);
+  }
+});
+
+app.get("/login", (req, res) => {
+  if (req.session.user_id) {
+    res.redirect("/urls");
+  } else {
+    const templateVars = {
+      user: users[req.session.user_id],
+    };
+    res.render("urls_login", templateVars);
+  }
+});
+
+app.get("/register", (req, res) => {
+  if (req.session.user_id) {
+    res.redirect("/urls");
+  } else {
+    const templateVars = {
+      user: users[req.session.user_id],
+    };
+    res.render("urls_register", templateVars);
+  }
+});
+
+app.post("/urls", (req, res) => {
+  if (!req.session.user_id) {
+    res.status(401).send(MESSAGE_401);
+  } else {
+    const templateVars = {
+      urls: urlsForUser(req.session.user_id, urlDatabase),
+      user: users[req.session.user_id],
+    };
+    const shortURL = generateRandomString(6);
+    urlDatabase[shortURL] = {
+      longURL: req.body.longURL,
+      userID: req.session.user_id,
+    };
+    res.redirect(`/urls/${shortURL}`);
+  }
+});
+
 app.post("/urls/:id", (req, res) => {
   const shortURL = req.params.id;
   if (urlDatabase[shortURL] === undefined) {
@@ -107,16 +144,6 @@ app.post("/urls/:id", (req, res) => {
   }
 });
 
-app.get("/u/:id", (req, res) => {
-  const shortURL = req.params.id;
-  const longURL = urlDatabase[shortURL].longURL;
-  if (!longURL) {
-    res.status(400).send("Invalid URL");
-  } else {
-    res.redirect(longURL);
-  }
-});
-
 app.post("/urls/:id/delete", (req, res) => {
   const shortURL = req.params.id;
   if (urlDatabase[shortURL] === undefined) {
@@ -128,17 +155,6 @@ app.post("/urls/:id/delete", (req, res) => {
   } else {
     delete urlDatabase[shortURL];
     res.redirect("/urls");
-  }
-});
-
-app.get("/login", (req, res) => {
-  if (req.session.user_id) {
-    res.redirect("/urls");
-  } else {
-    const templateVars = {
-      user: users[req.session.user_id],
-    };
-    res.render("urls_login", templateVars);
   }
 });
 
@@ -155,17 +171,6 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("/login");
-});
-
-app.get("/register", (req, res) => {
-  if (req.session.user_id) {
-    res.redirect("/urls");
-  } else {
-    const templateVars = {
-      user: users[req.session.user_id],
-    };
-    res.render("urls_register", templateVars);
-  }
 });
 
 app.post("/register", (req, res) => {
