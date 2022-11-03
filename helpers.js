@@ -4,7 +4,7 @@ const generateRandomString = (number) => {
   characters = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789";
   for (let i = 0; i < number; i++) {
     shortURL += characters.substr(
-      Math.floor(Math.random() * characters.length + 1),
+      Math.floor(Math.random() * characters.length - 1),
       1
     );
   }
@@ -31,5 +31,7 @@ const urlsForUser = (id, database) => {
   }
   return userURL;
 };
+
+console.log(generateRandomString(6));
 
 module.exports = { generateRandomString, getUserByEmail, urlsForUser };
