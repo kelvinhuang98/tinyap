@@ -4,66 +4,21 @@ const bcrypt = require("bcryptjs");
 const app = express();
 const PORT = 8080; // default port 8080
 
-const users = {
-  userRandomID: {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur",
-  },
-  user2RandomID: {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk",
-  },
-};
+const {
+  generateRandomString,
+  getUserByEmail,
+  urlsForUser,
+} = require("./helpers");
 
-const urlDatabase = {
-  b6UTxQ: {
-    longURL: "https://www.tsn.ca",
-    userID: "aJ48lW",
-  },
-  i3BoGr: {
-    longURL: "https://www.google.ca",
-    userID: "aJ48lW",
-  },
-};
+const users = {};
+
+const urlDatabase = {};
 
 const MESSAGE_401 = "You must be logged in to use TinyApp";
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-const generateRandomString = (number) => {
-  shortURL = "";
-  characters = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789";
-  for (let i = 0; i < number; i++) {
-    shortURL += characters.substr(
-      Math.floor(Math.random() * characters.length + 1),
-      1
-    );
-  }
-  return shortURL;
-};
-
-const getUserByEmail = (email, users) => {
-  for (let user in users) {
-    if (users[user].email === email) {
-      return users[user];
-    }
-  }
-  return null;
-};
-
-const urlsForUser = (id, database) => {
-  let userURL = {};
-  for (let shortURL in database) {
-    if (database[shortURL].userID === id) {
-      userURL[shortURL] = database[shortURL];
-    }
-  }
-  return userURL;
-};
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -194,8 +149,7 @@ app.post("/login", (req, res) => {
     res.cookie("user_id", user.id);
     res.redirect("/urls");
   } else {
-    res.status(403);
-    res.send("Inputted invalid credentials");
+    res.status(403).send("Inputted invalid credentials");
   }
 });
 
@@ -219,11 +173,9 @@ app.post("/register", (req, res) => {
   const newEmail = req.body.email;
   const newPass = req.body.password;
   if (newEmail === "" || newPass === "") {
-    res.status(400);
-    res.send("Please enter a valid email/password");
+    res.status(400).send("Please enter a valid email/password");
   } else if (getUserByEmail(newEmail, users)) {
-    res.status(400);
-    res.send("This email address has already been registered");
+    res.status(400).send("This email address has already been registered");
   } else {
     const hashedPassword = bcrypt.hashSync(newPass, 10);
     const user = {
@@ -232,7 +184,6 @@ app.post("/register", (req, res) => {
       password: hashedPassword,
     };
     users[user.id] = user;
-    console.log(user);
     res.cookie("user_id", user.id);
     res.redirect("/urls");
   }
