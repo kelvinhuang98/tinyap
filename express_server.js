@@ -66,6 +66,8 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   if (!req.session.user_id) {
     res.status(401).send(MESSAGE_401);
+  } else if (!urlDatabase[req.params.id]) {
+    res.status(404).send("Error: The page you were looking for does not exist");
   } else if (req.session.user_id !== urlDatabase[req.params.id].userID) {
     res.status(403).send("You do not have access to this URL");
   } else {

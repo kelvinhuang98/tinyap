@@ -32,6 +32,4 @@ const urlsForUser = (id, database) => {
   return userURL;
 };
 
-console.log(generateRandomString(6));
-
 module.exports = { generateRandomString, getUserByEmail, urlsForUser };
