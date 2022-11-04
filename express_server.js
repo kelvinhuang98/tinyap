@@ -84,7 +84,7 @@ app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
   const longURL = urlDatabase[shortURL].longURL;
   if (!longURL) {
-    res.status(400).send("Invalid URL");
+    res.status(404).send("Invalid URL");
   } else {
     res.redirect(longURL);
   }
